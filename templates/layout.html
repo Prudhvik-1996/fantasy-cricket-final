@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Fantasy Cricket</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-signin-scope" content="profile email">
+  <meta name="google-signin-client_id" content="77574663107-l088ug78l4dna4jgpe5hb7jh4pjbsee1.apps.googleusercontent.com">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../static/custom.css">
+  <style type="text/css">
+    div.chatitemclass {
+      background-color: #ddd;
+      padding: 5px 10px;
+      border-radius: 10px;
+      color: #555;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body style="background-image: url('https://www.insure4sport.co.uk/blog/wp-content/uploads/2014/10/cricket-bat-and-ball-on-grass.jpg'); background-color: black; color= #FFFFFF; background-repeat: no-repeat; background-position: center; background-size: cover; width:100%; height: 100%; padding-bottom:300px; ">
+
+  <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: black;">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" style="color: #F2F3F4;" href="/">Fantasy Cricket home</a>
+      </div>
+      {% if not session.logged_in %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/rules"><span class="glyphicon" style="color: #F2F3F4;"></span> About</a></li>
+        <li><a href="/signup"><span class="glyphicon glyphicon-user" style="color: #F2F3F4;"></span> Sign Up</a></li>
+        <li><a href="/login"><span class="glyphicon glyphicon-log-in" style="color: #F2F3F4;"></span> Login</a></li>
+      </ul>
+      {% else %}
+      <ul class="nav navbar-nav navbar-right">
+          <li><a href="/rules"><span class="glyphicon" style="color: #F2F3F4;"></span> About</a></li>
+          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" style="color: #F2F3F4;" href="#">{{session.log_email}}<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-list"><a href="/yourdetails">Your details</a></li>
+              <li class="dropdown-list"><a href="/logout">Logout</a></li>
+            </ul>
+          </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>
+  <br>
+  <br>
+  <br>
+  <div class="container col-md-9">
+    <div style="overflow-y: scroll; width: 100%; height: 650px;" class="well">
+      {% block body %}
+      {% endblock %}
+      <br><br><br><br>
+      <br><br><br><br>
+    </div>
+  </div>
+  
+  <div class="col-md-3" id="chatRoom">
+    <div style="overflow-y: scroll; width: 100%; height: 600px;" class="well chatitemclass" id="chatBox">
+      <div id="chatsFromDB">        
+        {% for chat in chats %}
+          <div style="margin-left: 10px">
+            <h5>{{ chat.email }}</h5>
+            <p>{{ chat.message }}</p>
+          </div>
+          <hr>
+        {% endfor %}
+      </div>
+      <div style="margin-left: 10px" id = "chatItem">
+        
+      </div>
+    </div><br>
+    <textarea style="width: 100%; height: 50px" id="message" required></textarea>
+    <button type="submit" id="send">Send</button>
+  </div>
+  
+  <script type="text/javascript">
+    $(function() {
+      $('#send').bind('click', function(){
+        var msg = $('#message').val();
+        if(msg!=""){
+          $.ajax({
+            url: '/chat',
+            data: {'message': msg},
+            type: 'POST',
+            dataType: 'JSON',
+            success: function(response){
+              var email = "<h5>"+response.email+":</h5>";
+              var message = "<p>"+response.message+"</p>";
+              $('#chatItem').append(email,message,"<hr>");
+              $('#message').val("");
+            }
+          });
+        }
+      });
+    });
+    setInterval(function(){
+      $.ajax({
+        url: '/chatReload',
+        data: {'message': "msg"},
+        type: 'POST',
+        dataType: 'JSON',
+
+        success: function(response) {
+          // console.log(response);
+          $('#chatsFromDB').html("");
+          $('#chatItem').html("");
+           for(var i=0;i<response.length;i++){
+              // console.log(response[i].email, response[i].message);
+              var email = "<h5>"+response[i].email+":</h5>";
+              var message = "<p>"+response[i].message+"</p>";
+              $('#chatItem').append(email,message,"<hr>");
+          }
+        },
+        error: function(error){
+          console.log("in error");
+        }
+      });
+    }, 2000);
+  </script>
+  
+  <!-- <script type="text/javascript">setTimeout(function(){location.reload();}, 5000);</script> -->
+  <br>
+  <br>
+  <br>
+<div class="navbar-fixed-bottom" style="background-color: black; color: white">
+  <center><br>By <a href="http://prudhvikchirunomula.pythonanywhere.com/"> Prudhvik Chirunomula</a><br></center>
+</div>
+</body>
+</html>

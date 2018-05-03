@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block body %}
+	<h2>Signup</h2>
+	{% if error %}<p class="alert alert-danger"><strong>Error:</strong> {{ error }}{% endif %}
+	<div class="well">
+			
+		<center>
+			    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div><br>
+		</center>
+		<form action="{{ url_for('signup') }}" method="post">
+			<fieldset>
+				<legend></legend>
+				<div>
+					<label>User name</label><br>
+	        		<input type="hidden" name="name" required id="username"  size="35"></dd>
+	        		<input type="text" name="name1" disabled id="username1"  size="35"></dd>
+				</div><br>
+				<div>
+			          <label id="labelForEmail"></label><br>
+	        		<input type="hidden" name="email" required id="email"  size="35"></dd>
+	        		<input type="email" name="email1" disabled id="email1"  size="35"></dd>
+				</div><br>
+	        	<input type="submit" value="Signup"></dd>
+
+			</fieldset>
+		</form>
+	</div>
+
+	<script>
+        function onSignIn(googleUser) {
+	        // Useful data for your client-side scripts:
+	        var profile = googleUser.getBasicProfile();
+	        console.log('Full Name: ' + profile.getName());
+	        console.log("Email: " + profile.getEmail());
+			document.getElementById("username").value=profile.getName();
+			document.getElementById("username1").value=profile.getName();
+			document.getElementById("email1").value=profile.getEmail();
+			document.getElementById("email").value=profile.getEmail();
+	        // The ID token you need to pass to your backend:
+	        var id_token = googleUser.getAuthResponse().id_token;
+	        console.log("ID Token: " + id_token);
+	        if (profile.getId().length!=0) {document.getElementById("labelForEmail").innerHTML="You will be signed up as:"
+	    	}
+        };
+    </script>
+{% endblock %}
