@@ -609,7 +609,7 @@ def chatReload():
     return json.dumps([chat.as_dict() for chat in chats])
 
 if __name__ == '__main__':
-    host = "localhost"
+#     host = "localhost"
     # host = "10.10.8.106"
-    port = 8001
-    app.run(debug=True, host=host, port=port, threaded=True)
+#     port = 8001
+    app.run(threaded=true)
